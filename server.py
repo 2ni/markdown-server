@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import markdown
 import sys
+import argparse
 
 
 class MyHTTPHandler(http.server.SimpleHTTPRequestHandler):
@@ -38,16 +39,20 @@ class MyHTTPHandler(http.server.SimpleHTTPRequestHandler):
             http.server.SimpleHTTPRequestHandler.do_GET(self)
 
 
-PORT = 8080
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run a markdown server on localhost", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-p", "--port", type=int, default=8080, help="set the port which the local server is listening to")
 
-# handler = http.server.SimpleHTTPRequestHandler
-handler = MyHTTPHandler
+    args = parser.parse_args()
 
-socketserver.TCPServer.allow_reuse_address = True
-with socketserver.TCPServer(("", PORT), handler) as httpd:
-    print("Server started at http://localhost:" + str(PORT))
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        httpd.server_close()
-        sys.exit(0)
+    # handler = http.server.SimpleHTTPRequestHandler
+    handler = MyHTTPHandler
+
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("", args.port), handler) as httpd:
+        print("Server started at http://localhost:" + str(args.port))
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            httpd.server_close()
+            sys.exit(0)
