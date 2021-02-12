@@ -11,25 +11,25 @@ class MyHTTPHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
 
-            html = "works: " + self.path
-            with open("README.md", "r", encoding="utf8") as input_file:
+            with open("github-markdown.css", "r", encoding="utf8") as css_file:
+                css = css_file.read()
+
+            with open(self.path[1:], "r", encoding="utf8") as input_file:
                 text = input_file.read()
 
             html = """<html>
             <head>
-              <style>
-                body {{ max-width: 1024px; border: 1px solid #E1E4E8; padding: 1em; border-radius: .2em; }}
-                a {{ color: #0366d6; text-decoration: none; }}
-                a:visited {{ color: #0366d6 }}
-                html {{ color: #242926; font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji" }}
-                code {{ border-radius: .2em; width: 100%; box-sizing: border-box; display: block; font-size: .8em; color: #24292e; background-color: #f6f8fa; padding: 0.5em; font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; }}
+              <style type="text/css">
+              {css}
               </style>
             </head>
             <body>
+            <div class="markdown-body">
             {markdown}
+            </div>
             </body>
             </html>
-            """.format(markdown=markdown.markdown(text))
+            """.format(markdown=markdown.markdown(text), css=css)
 
             self.wfile.write(bytes(html, "utf8"))
 
